@@ -1,5 +1,4 @@
 # Configuration file for ebook organization script
-
 # Use metadata from the file itself
 use_file_meta: true
 
@@ -18,14 +17,14 @@ logging: true
 logging_level: 'INFO'  # Options: DEBUG, INFO, WARNING, ERROR, CRITICAL
 logging_file: 'logs/ebook_organizer.log'
 
-# Write metadata to files
+# Write metadata to output files
 write_metadata: true
 
 # Input and output folders for ebooks
 input_folder: 'F:\Prace\Organizers\Ebooks\unorganized_ebooks'
 output_folder: 'F:\Prace\Organizers\Ebooks\organized_ebooks'
 
-# Enrich metadata:
+# Enrich metadata true/false:
 ALL_METADATA_KEYS:
   author: true
   title: true
