@@ -1,0 +1,11 @@
+# this is .gitignore file
+.txt
+.log
+.env
+
+# ignore all files in 'problem' folder
+problems/*
+# ignore all files in 'organized' folder
+organized_ebooks/*
+# ignore all files in 'unorganized' folder
+unorganized_ebooks/*

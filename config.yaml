@@ -1,0 +1,49 @@
+# Configuration file for ebook organization script
+
+# Use metadata from the file itself
+use_file_meta: true
+
+# Use metadata from the file itself only if all metadata is provided
+use_file_meta_only: true
+
+# Use of an Google Books API
+google_api: true
+
+# Use of Ollama for LLM queries
+ollama: true
+llm_model: 'llama3'
+
+# Logging configuration
+logging: true
+logging_level: 'INFO'  # Options: DEBUG, INFO, WARNING, ERROR, CRITICAL
+logging_file: 'logs/ebook_organizer.log'
+
+# Write metadata to files
+write_metadata: true
+
+# Input and output folders for ebooks
+input_folder: 'F:\Prace\Organizers\Ebooks\unorganized_ebooks'
+output_folder: 'F:\Prace\Organizers\Ebooks\organized_ebooks'
+
+# Enrich metadata:
+ALL_METADATA_KEYS:
+  author: true
+  title: true
+  year: true
+  isbn: true
+  publisher: true
+  language: true
+  description: true
+  series: false
+  series_index: false
+  subjects: false
+  cover: true
+  identifiers: true
+  contributors: false
+  rights: false
+  format: false
+  source: true
+  modification_date: true
+  creation_date: true
+  page_count: true
+  file_size: true

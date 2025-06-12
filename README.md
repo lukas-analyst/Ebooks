@@ -1,0 +1,1 @@
+Organize books using Google API and Ollama (LLM) into folders
