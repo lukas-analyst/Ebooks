@@ -1,7 +1,7 @@
 import yaml
 from pathlib import Path
 
-def metadata_keys(config_path=Path("config.yaml")):
+def metadata_keys(config_path=Path("config\config.yaml")):
     
     """
     Load metadata keys from the configuration file.

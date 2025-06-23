@@ -1,0 +1,7 @@
+requests
+pyyaml
+ebooklib
+python-docx
+beautifulsoup4
+PyPDF2
+nameparser

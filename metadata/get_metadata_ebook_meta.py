@@ -1,20 +1,21 @@
 import subprocess
 import logging
 import re
-import os
 from metadata.metadata_keys import metadata_keys
+from utils.clean_unknown import clean_unkwown
+from utils.is_valid_isbn import is_valid_isbn
 
 ALL_METADATA_KEYS = metadata_keys()
-FC = "get_metadata_ebook_meta"
 
 def get_metadata_ebook_meta(file_path):
+    """
+    Retrieves metadata from an ebook file using the `ebook-meta` command-line tool.
+    :param file_path: Path to the ebook file.
+    :return: A dictionary containing the metadata for the ebook.
+    """
     metadata = {key: "" for key in ALL_METADATA_KEYS}
-    try:
-        # File format check
-        if not str(file_path).lower().endswith(('.epub', '.mobi', '.azw3')):
-            logging.info(f"[{FC}] - File format not supported {file_path}")
-            return metadata
 
+    try:
         result = subprocess.run(
             ['ebook-meta', str(file_path)],
             capture_output=True, text=True, check=True, encoding='utf-8'
@@ -44,24 +45,19 @@ def get_metadata_ebook_meta(file_path):
             "file_size": r'File size\s*:\s*(.+)',
         }
 
-        def clean(val):
-            if not val:
-                return ""
-            val = val.strip()
-            if val.lower() in ["neznámý", "neznamy", "unknown"]:
-                return ""
-            return val
-
         for key in ALL_METADATA_KEYS:
             if key in regex_map:
                 match = re.search(regex_map[key], output)
-                metadata[key] = clean(match.group(1)) if match else ""
+                value = clean_unkwown(match.group(1)) if match else ""
+                # Kontrola ISBN
+                if key == "isbn" and value and not is_valid_isbn(value):
+                    value = ""
+                metadata[key] = value
 
         # Remove empty metadata fields
         metadata = {k: v for k, v in metadata.items() if v}
-
-        logging.info(f"[{FC}] - ebook-meta for '{file_path}': {metadata}")
         return metadata
     except Exception as e:
-        logging.warning(f"[{FC}] - Failed to get metadata from ebook-meta for '{file_path}': {e}")
+        logging.warning(f"get_metadata_ebook_meta - Failed to get metadata from ebook-meta for '{file_path}'")
+        logging.warning(f"get_metadata_ebook_meta - Error: {e}")
         return {key: "" for key in ALL_METADATA_KEYS}

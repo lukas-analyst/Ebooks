@@ -1,95 +1,103 @@
-import yaml
-import re
 import shutil
 import csv
 import logging
 from pathlib import Path
-from get_metadata import get_metadata
-from metadata.write_metadata import set_metadata_ebook_meta
+from metadata.get_metadata import get_metadata
+from metadata.update_metadata_ebook import update_metadata_ebook
+from utils.clean_unknown import clean_name
+from metadata.metadata_keys import metadata_keys
+from config.load_config import load_config
 
-
-# Load configuration file
-def load_config(config_path='config.yaml'):
-    with open(config_path, 'r', encoding='utf-8') as f:
-        return yaml.safe_load(f)
-
-config = load_config()
+CONFIG = load_config()
+ALL_METADATA_KEYS = metadata_keys()
 
 # Logging - get configuration from config.yaml (if true, logging_level, logging_file)
-if config.get('logging', True):
+if CONFIG.get('logging', True):
     logging.basicConfig(
-        level=config.get('logging_level', 'INFO').upper(),
+        level=CONFIG.get('logging_level', 'INFO').upper(),
         format='%(asctime)s %(levelname)s: %(message)s',
         handlers=[
-            logging.FileHandler(config.get('logging_file', 'organize_ebooks.log'), encoding='utf-8'),
-            logging.StreamHandler()
+            logging.FileHandler(CONFIG.get('logging_file', 'organize_ebooks.log'), encoding='utf-8'),
+            # logging.StreamHandler()
         ]
     )
 else:
     logging.basicConfig(level=logging.CRITICAL)
 
-# Cleaning function to remove invalid characters from folder names
-def clean_name(name):
-    return re.sub(r'[<>:"/\\|?*]', '', name).strip().rstrip('.')
-
 # Function to organize ebooks
 def organize_ebooks():
-    src_dir = Path(config.get('input_folder', 'unorganized_ebooks'))
-    dst = Path(config.get('output_folder', 'organized_ebooks'))
+    """
+    Organizes ebooks from the source directory into an organized structure based on author and title.
+    It scans the source directory for ebook files, retrieves their metadata, and organizes them into
+    a structured folder hierarchy. It also writes a CSV file with the metadata of all processed ebooks.
+    """
+
+    src_dir = Path(CONFIG.get('input_folder', 'unorganized_ebooks'))
+    dst = Path(CONFIG.get('output_folder', 'organized_ebooks'))
     books_info = []
 
-    logging.info(f"Scanning for ebooks in: {src_dir.resolve()}")
+    print(f"Scanning for ebooks in: {src_dir.resolve()}")
+    all_files = [f for f in src_dir.rglob('*') if f.is_file()]
+    print(f"Found {len(all_files)} files in the source directory.")
 
-    # If the folder does not exists or is empty then log and exit
-    if not src_dir.exists() or not any(src_dir.iterdir()):
+    if not src_dir.exists() or not all_files:
         logging.error(f"Source folder '{src_dir}' does not exist or is empty.")
         return
 
-    # Scan for all files in the source directory
-    for file in src_dir.rglob('*'):
-        if not file.is_file():
-            continue
+    # Scan the source directory for folders and files
+    for idx, file in enumerate(all_files, 1):
+        ext = file.suffix.lower()
+        # Supported ebook formats
+        if ext in ['.epub', '.mobi', '.azw3', '.azw', '.pdb', 'pdf']:
+            print(f"Processing: {file.stem}")
+            logging.info(f"Processing file: {file.stem}")
+            metadata = get_metadata(
+                file,
+                use_file_meta=CONFIG.get('use_file_meta'),
+                use_file_meta_only=CONFIG.get('use_file_meta_only'),
+                use_google_api=CONFIG.get('google_api'),
+                use_open_library_api=CONFIG.get('open_library_api'),
+                use_llm=CONFIG.get('use_llm')
+            )
 
-        logging.info(f"Processing file: {file}")
-        metadata = get_metadata(
-            file,
-            use_file_meta=config.get('use_file_meta', False),
-            use_file_meta_only=config.get('use_file_meta_only', False),
-            use_google_api=config.get('google_api', False),
-            use_ollama=config.get('ollama', False),
-            llm_model=config.get('llm_model', 'llama3')
-        )
+            # Create the target directory structure
+            if not dst.exists():
+                dst.mkdir(parents=True, exist_ok=True)
 
-        author = clean_name(metadata.get("author", "") or "Unknown Author")
-        title = clean_name(metadata.get("title", "") or file.stem)
+            # If the author is empty, use "Unknown Author"
+            author = clean_name(metadata.get("author", "") or "Unknown Author")
+            # If the title is empty, use the file name without extension
+            title = clean_name(metadata.get("title", "") or file.stem)
 
-        target_dir = dst / author / title
-        logging.info(f"Creating directory: {target_dir}")
-        target_dir.mkdir(parents=True, exist_ok=True)
+            # Create the target directory based on author and title
+            target_dir = dst / author / title
+            target_dir.mkdir(parents=True, exist_ok=True)
+            new_filename = f"{title}{ext}"
+            target_file = target_dir / new_filename
 
-        ext = file.suffix
-        new_filename = f"{title}{ext}"
-        target_file = target_dir / new_filename
-        shutil.copy2(file, target_file)
+            print(f"Processed File N. {len(books_info) + 1} / {len(all_files)}:")
+            print(f"{author} - {title}")
 
-        if not dst.exists():
-            logging.info(f"Creating output folder: {dst}")
-            dst.mkdir(parents=True, exist_ok=True)
+            # Copy the file to the target directory
+            shutil.copy2(file, target_file)
 
-        # Write metadata to the file if required
-        if config.get('write_metadata', False) and ext.lower() in ['.epub', '.mobi', '.azw3']:
-            set_metadata_ebook_meta(target_file, metadata)
+            # Write the new metadata to the file (if allowed)
+            if CONFIG.get('write_metadata') and ext not in ['.pdf']:
+                update_metadata_ebook(target_file, metadata)
 
-        # Add to list.txt
-        books_info.append([v for k, v in metadata.items() if k != "cover" and v])
+            # Write to CSV file
+            books_info.append([v for k, v in metadata.items() if k != "cover" and v])
+        
+        else:
+            logging.warning(f"Unsupported file format: {file.name} (skipping)")
 
-
+    header = [k for k in ALL_METADATA_KEYS if k != "cover"]
     list_file = 'ebooks.csv'
-    logging.info(f"Writing final list to {list_file}")
     with open(list_file, 'w', encoding='utf-8', newline='') as f:
         writer = csv.writer(f, delimiter=';')
+        writer.writerow(header)
         writer.writerows(books_info)
-    logging.info("Done organizing ebooks.")
+    print("Done organizing ebooks.")
 
 if __name__ == '__main__':
     organize_ebooks()
