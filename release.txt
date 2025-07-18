@@ -1,0 +1,20 @@
+**📚✨ LibriSorted v0.1.0: A Novel Approach to Digital Disarray! ✨📚**
+
+> It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a well-organized ebook collection.
+ – Jane Austen (probably, if she had Wi-Fi).
+
+Tired of your digital library resembling a particularly chaotic chapter of "Ulysses"? Fret no more! I'm thrilled to present the inaugural release of LibriSorted, the digital librarian that brings order to your literary cosmos.
+
+This isn't just a script; it's a plot twist for your unkempt folders. LibriSorted meticulously scans your digital stacks, extracting metadata with the precision of a Sherlock Holmes investigation (and a dash of AI if you're feeling artificially intelligent). Then, like a well-trained butler, it sorts your beloved reads into neat, logical shelves by author and title. No more "Call Me Ishmael, but I can't find that Melville file!" moments.
+
+**What's new in this prologue:**
+
+**Intelligent Metadata Extraction:** Whether it's from the ebook itself, Google Books, or even a dash of LLM magic, we dig up those crucial details.
+**Structured Organization:** Your books are moved into clear Author/Title folders, bringing a sense and sensibility to your digital space.
+**CSV Compendium:** For the data aesthetes among us, a comprehensive CSV file is generated, acting as your personal Dewey Decimal System.
+**Event Logging:** Every move is logged, so if anything goes amiss, you can blame the computer, not your "short, unhappy life" with digital clutter.
+No longer will you suffer the "Great Expectations" of finding a lost PDF, only to discover it buried under layers of unsorted downloads. LibriSorted is here to ensure your digital "Tale of Two Cities" doesn't end in "it was the worst of times."
+
+Get ready to turn your digital "Waste Land" into a well-curated "Garden Party"!
+
+Happy organizing, and may your reading be ever-found! 🚀

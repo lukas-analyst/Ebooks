@@ -4,8 +4,13 @@ from metadata.metadata_keys import metadata_keys
 from utils.clean_unknown import clean_unkwown
 from utils.is_valid_isbn import is_valid_isbn
 from utils.normalize_author import normalize_author
+from config.load_config import load_config
 
 ALL_METADATA_KEYS = metadata_keys()
+CONFIG = load_config()
+
+common_languages = CONFIG.get("common_languages")
+common_languages_str = "', '".join(common_languages)
 
 SYSTEM_PROMPT = (
     "Your task is to extract only the (full name) author, title and the language of a book from the provided text. "
@@ -13,7 +18,7 @@ SYSTEM_PROMPT = (
     "The language is meant to be the language in which the book is written."
     "The title should not include the author name."
     "Do not include any other information, comments or additional text. "
-    "Usually the language is 'cs' or 'en'.\n"
+    f"Usually the language is one of: '{common_languages_str}'.\n"
     "Return only the metadata in the following format:\n"
     "Author: <author>\n"
     "Title: <title>\n"
@@ -29,6 +34,7 @@ def get_metadata_llm(file_path, probable_metadata=None):
     Title: <title>
     Language: <language>
     :param file_path: Path to the ebook file.
+    :param probable_metadata: A dictionary containing probable metadata (author, title, language, isbn) to help the LLM.
     :return: A dictionary containing the metadata for the ebook.
     """
 
@@ -36,7 +42,7 @@ def get_metadata_llm(file_path, probable_metadata=None):
         # Create a prompt for the LLM
         probable_author = probable_metadata.get("author", "") if probable_metadata else ""
         probable_title = probable_metadata.get("title", "") if probable_metadata else ""
-        prompt = f"{file_path}\n\n {probable_author} - {probable_title}"
+        prompt = f"File path: {file_path}\n\n Probable author: {probable_author} - Probable title {probable_title}"
         response = ollama.chat(
             model="llama3",
             messages=[

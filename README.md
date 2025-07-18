@@ -1,23 +1,22 @@
-# Ebook Organizer
+# LibriSorted
 
-A Python tool for organizing your ebook collection. It scans a source folder, extracts metadata (using local tools, Google Books API, or LLM), and sorts ebooks into a structured folder hierarchy by author and title. It also generates a CSV file with metadata for all processed ebooks.
+A Python tool for organizing your ebook collection. It scans a source folder, extracts metadata (using local tools, Google Books API OpenLibrary API, or LLM), and sorts ebooks into a structured folder hierarchy by author and title. It also generates a CSV file with metadata for all processed ebooks.
 
 ## Features
 
 - Supports EPUB, MOBI, AZW3, AZW, PDB, and PDF formats
-- Extracts metadata from files, Google Books API, or LLM (Ollama)
+- Extracts metadata from files, Google Books API, OpenLibrary API, or LLM (Ollama)
 - Organizes ebooks into folders by author and title
 - Optionally writes metadata back to ebook files (except PDF)
 - Generates a CSV summary of all processed ebooks
 - Configurable via `config/config.yaml`
-- Logging to file
 
 ## Requirements
 
 - Python 3.8+
 - [Calibre](https://calibre-ebook.com/) (for `ebook-meta` command)
 - [Ollama](https://ollama.com/) (optional, for LLM metadata extraction)
-- Python packages: see `requirements.txt` (e.g. `requests`, `pyyaml`)
+- Python packages: see `requirements.txt`
 
 ## How to Run
 
@@ -31,7 +30,7 @@ A Python tool for organizing your ebook collection. It scans a source folder, ex
 3. *(Optional)* **Install Ollama** if you want to use LLM metadata extraction.
 
 4. **Configure** the tool:
-   - Edit `config/config.yaml` to set input/output folders and metadata keys.
+   - Edit `config/config.yaml`
 
 5. **Place your ebooks** in the input folder (default: `unorganized_ebooks`).
 
@@ -43,7 +42,7 @@ A Python tool for organizing your ebook collection. It scans a source folder, ex
 7. **Check the output:**
    - Organized ebooks will be in the output folder (default: `organized_ebooks`)
    - Metadata summary in `ebooks.csv`
-   - Logs in `organize_ebooks.log`
+   - Logs in `logs/organize_ebooks.log`
 
 ## Folder Structure
 
@@ -68,4 +67,4 @@ A Python tool for organizing your ebook collection. It scans a source folder, ex
 
 ## License
 
-if you can use it, use it
+if you can read, feel free to use it

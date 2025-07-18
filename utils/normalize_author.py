@@ -1,5 +1,7 @@
 from nameparser import HumanName
 
+# Here you can add aliases for authors that might be commonly misnamed or have multiple variations.
+# "wrong_name": "correct_name"
 AUTHOR_ALIASES = {
     "Leo Tolstoj": "Lev Nikolajevič Tolstoj",
     "Leo Tolstoy": "Lev Nikolajevič Tolstoj",

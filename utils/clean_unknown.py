@@ -9,8 +9,8 @@ def clean_unkwown(value):
     """
 
     if not value or value.lower() in [
-        "neznámý", "neznamy", "unknown", "unknown author",
-        "www.online-convert.com", "0101", "ArtheWorld ۩ eKnihy",
+        "unknown", "unknown author",
+        "www.online-convert.com", "0101",
         "5bdf262d2065261bea948f5e4d4d0dce", "stefamag", "9917"
     ]:
         return ""

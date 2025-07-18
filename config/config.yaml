@@ -5,14 +5,19 @@ use_file_meta: true
 # if all metadata is provided within the file use them and end
 use_file_meta_only: false
 
-# Use LLM to enhance metadata extraction
-use_llm: true
-
 # Find metadata through Google Books API
 google_api: true
 
-# Use Open Library API for metadata
+# Find metadata through Open Library API
 open_library_api: true
+
+# Use LLM to enhance metadata extraction (requires Ollama)
+use_llm: true
+
+# Which languages are likely in your unorganized folder - only if you use LLM
+common_languages:
+  - 'en'
+  - 'cs'
 
 # Logging configuration
 logging: true
@@ -23,8 +28,8 @@ logging_file: 'logs/ebook_organizer.log'
 write_metadata: true
 
 # Input and output folders for ebooks
-input_folder: 'F:\Prace\Organizers\Ebooks\unorganized_ebooks'
-output_folder: 'L:\Knihovna\Knihy'
+input_folder: 'F:\Prace\Organizers\Ebooks\unorganized_ebooks' # Comment for Default: unorganized_ebooks
+output_folder: 'L:\Knihovna\Knihy' # Comment for Default: organized_ebooks
 
 # Enrich metadata true/false:
 ALL_METADATA_KEYS:

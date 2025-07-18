@@ -6,6 +6,7 @@ def is_valid_isbn(isbn):
     :param isbn: ISBN string (with or without hyphens/spaces)
     :return: True if valid, False otherwise
     """
+    
     if not isbn:
         return False
     isbn = isbn.replace('-', '').replace(' ', '').upper()

@@ -7,3 +7,8 @@
 organized_ebooks/*
 # ignore all files in 'unorganized' folder
 unorganized_ebooks/*
+
+# ignore __pycache__ directories
+__pycache__/
+# ignore .vscode directories
+.vscode/
